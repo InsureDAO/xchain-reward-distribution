@@ -1,0 +1,33 @@
+version: '3.8'
+
+x-common: &common
+  command:
+    - anvil -f $$RPC_URL
+  environment:
+    - ANVIL_IP_ADDR=0.0.0.0
+
+services:
+  mainnet-fork:
+    <<: *common
+    container_name: mainnet-fork
+    image: ghcr.io/foundry-rs/foundry:latest
+    ports:
+      - 8545:8545
+    env_file:
+      - env/mainnet.env
+  arbitrum-fork:
+    <<: *common
+    container_name: arbitrum-fork
+    image: ghcr.io/foundry-rs/foundry:latest
+    ports:
+      - 8546:8545
+    env_file:
+      - env/arbitrum.env
+  optimism-fork:
+    <<: *common
+    container_name: optimism-fork
+    image: ghcr.io/foundry-rs/foundry:latest
+    ports:
+      - 8547:8545
+    env_file:
+      - env/optimism.env

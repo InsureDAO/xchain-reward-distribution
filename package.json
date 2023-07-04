@@ -1,0 +1,41 @@
+{
+  "name": "xchain-reward-distribution",
+  "version": "0.1.0",
+  "description": "xchain reward distribution",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fork": "docker run ghcr.io/foundry-rs/foundry:latest",
+    "solc": "docker run -v $(pwd):/sources ethereum/solc:0.8.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InsureDAO/xchain-reward-test.git"
+  },
+  "author": "InsureDAO",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/InsureDAO/xchain-reward-test/issues"
+  },
+  "homepage": "https://github.com/InsureDAO/xchain-reward-test#readme",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "viem": "^1.2.9"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "volta": {
+    "node": "18.16.1"
+  },
+  "engines": {
+    "node": "^18.16.1",
+    "npm": "^9.5.1"
+  }
+}

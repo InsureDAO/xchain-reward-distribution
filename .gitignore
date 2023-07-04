@@ -10,5 +10,14 @@ out/
 # Docs
 docs/
 
+# CSV output
+/data
+
 # Dotenv file
 .env
+arbitrum.env
+mainnet.env
+optimism.env
+
+# node_modules
+node_modules/
