@@ -8,6 +8,6 @@ contract TestXchainReward is DeploymentSetUp {
     function setUp() public {}
 
     function testFoo() public {
-        assertEq(oL2.owner(), admin);
+        assertEq(L1_OWNERSHIP.owner(), admin);
     }
 }
