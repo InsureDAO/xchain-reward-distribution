@@ -5,3 +5,4 @@ dao-contracts/=lib/dao-contracts/contracts
 @openzeppelin/=lib/openzeppelin-contracts/
 utils/=lib/utils/
 src/=src/
+mock/=test/mock/
