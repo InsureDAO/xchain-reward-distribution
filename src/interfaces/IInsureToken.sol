@@ -3,6 +3,8 @@
 pragma solidity 0.8.10;
 
 interface IInsureToken {
+    function balanceOf(address _addr) external view returns (uint256);
+
     function mint(address _to, uint256 _value) external returns (bool);
 
     function emergency_mint(uint256 _amountOut, address _to) external;

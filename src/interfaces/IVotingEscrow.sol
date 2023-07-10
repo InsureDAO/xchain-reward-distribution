@@ -23,4 +23,8 @@ interface IVotingEscrow {
         address _addr,
         uint256 _idx
     ) external view returns (uint256);
+
+    function create_lock(uint256 _value, uint256 _unlock_time) external;
+
+    function increase_amount(uint256 _value) external;
 }

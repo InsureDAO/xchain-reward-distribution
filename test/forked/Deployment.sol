@@ -89,15 +89,18 @@ contract DeploymentSetUp is Test {
     uint polygonForkID = vm.createFork(vm.rpcUrl('polygon'));
 
     address admin = vm.addr(0x00001);
-    address nonceAdjuster = vm.addr(0x00002);
+    // to avoid already used account(nonce is not zero), give complex hash as input
+    address nonceAdjuster = vm.addr(uint(keccak256('XCHAIN_NONCE_ADJUSTER')));
     address alice = vm.addr(0xa11ce);
     address bob = vm.addr(0xb0b);
 
     // Mainnet contracts
     IInsureToken constant L1_INSURE =
         IInsureToken(0xd83AE04c9eD29d6D3E6Bf720C71bc7BeB424393E);
-    IOwnership constant L1_OWNERSHIP =
+    IOwnership constant L1_POOL_OWNERSHIP =
         IOwnership(0xf4dB9926aE02469D730A25AD7422764BBD45d36F);
+    IOwnership constant L1_DAO_OWNERSHIP =
+        IOwnership(0x56246e83F3148B05Ce2D90B44fbb4e9fa9EAF5bb);
     IVotingEscrow constant VOTING_ESCROW =
         IVotingEscrow(0x3dc07E60ecB3d064d20c386217ceeF8e3905916b);
     IGaugeController constant GAUGE_CONTROLLER =
@@ -112,12 +115,14 @@ contract DeploymentSetUp is Test {
 
     // Arbitrum contracts
     address constant ARB_USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
+    address constant ARB_VAULT = 0x968C9718f420d5D4275C610C5c217598a6ade9f9;
     address constant MKT_GMX = 0xE1a9f0add0022f3fA35a3A605b699F64fbe374E1;
     address constant MKT_RADIANT = 0x2D9e9D7f23787163320Db40573A864eD99aB6406;
     address constant MKT_DOPEX = 0x2eD1BA8eE5C5749490717b7fEbfd43D1bC8F6a47;
 
     // Optimism contracts
     address constant OPT_USDC = 0x7F5c764cBc14f9669B88837ca1490cCa17c31607;
+    address constant OPT_VAULT = 0xCa1FeE73b00c221966E5f25226402146BdffE259;
     address constant MKT_KWENTA = 0x4C1800E02532ed0fC60183454B9bffdf96B134F0;
     address constant MKT_THALES = 0x37D65A2f66d022b3F1739dEDcA1DfA076526D53E;
     address constant MKT_DFORCE = 0xF89A343Eeb7F5c82b5B1C8469899F8b8018c2956;
@@ -135,9 +140,26 @@ contract DeploymentSetUp is Test {
     IAltInsure altInsure;
 
     constructor() {
+        _commitOwnerships();
         _altInsureDeploy(arbitrumForkID);
         _altInsureDeploy(optimismForkID);
         _arbGaugeDeploy();
+    }
+
+    function _commitOwnerships() public {
+        vm.selectFork(mainnetForkID);
+        // transfer ownership to testing admin
+        vm.prank(L1_POOL_OWNERSHIP.owner());
+        L1_POOL_OWNERSHIP.commitTransferOwnership(admin);
+
+        vm.prank(admin);
+        L1_POOL_OWNERSHIP.acceptTransferOwnership();
+
+        vm.prank(L1_DAO_OWNERSHIP.owner());
+        L1_DAO_OWNERSHIP.commitTransferOwnership(admin);
+
+        vm.prank(admin);
+        L1_DAO_OWNERSHIP.acceptTransferOwnership();
     }
 
     function _altInsureDeploy(uint _forkID) internal {
@@ -197,19 +219,25 @@ contract DeploymentSetUp is Test {
 
         address[3] memory _markets = [MKT_GMX, MKT_RADIANT, MKT_DOPEX];
 
+        vm.breakpoint('a');
+
         for (uint i = 0; i < _markets.length; i++) {
             address _market = address(_markets[i]);
             // use hashed market address as salt
             bytes32 _salt = keccak256(abi.encodePacked(_market));
 
             vm.selectFork(mainnetForkID);
-            address _gauge = arbRootGaugeFactory.deploy_gauge(42161, _salt);
-            arbGauges[i] = _gauge;
+            address _root = arbRootGaugeFactory.deploy_gauge(42161, _salt);
+
+            GAUGE_CONTROLLER.add_gauge(_root, 1, 10000);
+            arbGauges[i] = _root;
 
             vm.selectFork(arbitrumForkID);
-            arbChildGaugeFactory.deploy_gauge(_market, _salt);
+            address _child = arbChildGaugeFactory.deploy_gauge(_market, _salt);
+
+            assertEq(_root, _child, 'RootGauge address != ChildGauge address');
             // storage variable is identical on both chains, so set variable again
-            arbGauges[i] = _gauge;
+            arbGauges[i] = _child;
         }
 
         vm.stopPrank();
@@ -301,6 +329,15 @@ contract DeploymentSetUp is Test {
             return 10;
         } else {
             revert('invalid fork id');
+        }
+    }
+
+    function _computeAddress(
+        bytes memory _code,
+        bytes32 _salt
+    ) internal returns (address computed) {
+        assembly {
+            computed := create2(0, add(_code, 0x20), mload(_code), _salt)
         }
     }
 }
