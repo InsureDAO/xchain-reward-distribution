@@ -11,6 +11,7 @@ import 'src/interfaces/IInsureToken.sol';
 import 'src/interfaces/IMinter.sol';
 import 'src/interfaces/IOwnership.sol';
 import 'src/interfaces/IVotingEscrow.sol';
+import 'src/interfaces/ISmartWalletChecker.sol';
 
 // pool contracts
 import 'src/interfaces/IVault.sol';
@@ -107,7 +108,11 @@ contract DeploymentSetUp is Test {
         IGaugeController(0x297ea2afcE594149Cd31a9b11AdBAe82fa1Ddd04);
     IMinter constant MINTER =
         IMinter(0x76E8B82EA3450fA598E5e164c7E28af172deBDC0);
+    ISmartWalletChecker constant SMART_WALLET_CHECKER =
+        ISmartWalletChecker(0xd39E280A9F0b74Ef04d5C7A81dBe757e589F8390);
 
+    address constant ORIGINAL_TOKEN_VAULT_V2 =
+        0x7510792A3B1969F9307F3845CE88e39578f2bAE1;
     address constant ANYCALL = 0x37414a8662bC1D25be3ee51Fb27C2686e2490A89;
     address constant CHILDCHAIN_MANEGER_PROXY =
         0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa;
@@ -141,6 +146,7 @@ contract DeploymentSetUp is Test {
 
     constructor() {
         _commitOwnerships();
+        _setVeWhitelist();
         _altInsureDeploy(arbitrumForkID);
         _altInsureDeploy(optimismForkID);
         _arbGaugeDeploy();
@@ -160,6 +166,12 @@ contract DeploymentSetUp is Test {
 
         vm.prank(admin);
         L1_DAO_OWNERSHIP.acceptTransferOwnership();
+    }
+
+    function _setVeWhitelist() public {
+        vm.selectFork(mainnetForkID);
+        vm.prank(admin);
+        SMART_WALLET_CHECKER.setWhitelist(alice, true);
     }
 
     function _altInsureDeploy(uint _forkID) internal {

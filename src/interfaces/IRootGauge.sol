@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 interface IRootGauge {
-    function transmit_emission() external;
+    function transmit_emissions() external;
 
     function integrate_fraction(address _user) external returns (uint);
 

@@ -24,4 +24,9 @@ interface IGaugeController {
         address _gauge_addr,
         uint256 _user_weight
     ) external;
+
+    function gauge_relative_weight_write(
+        address _addr,
+        uint256 _time
+    ) external returns (uint256);
 }
