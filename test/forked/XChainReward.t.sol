@@ -62,8 +62,7 @@ contract TestXchainReward is DeploymentSetUp {
         );
 
         // transmit emissions to the Child Gauge
-        // vm.prank(admin);
-        // * NOTES: transmit_emissions() must be called by the RootGaugeFactory(not the RootGauge itself)
-        // IRootGaugeFactory(arbRootGaugeFactory).transmit_emissions(_gmx);
+        // * NOTES: transmit_emissions() must be called to the RootGaugeFactory(not the RootGauge itself)
+        IRootGaugeFactory(arbRootGaugeFactory).transmit_emissions(_gmx);
     }
 }
