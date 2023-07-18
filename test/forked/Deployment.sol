@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 
 import 'forge-std/Test.sol';
 import '@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol';
-import 'mock/ERC20MintableUnsafe.sol';
+// import 'mock/ERC20MintableUnsafe.sol';
 // dao contracts
 import 'src/interfaces/IGaugeController.sol';
 import 'src/interfaces/IInsureToken.sol';
@@ -51,40 +51,6 @@ bytes constant ALT_INSURE_V1_BIN = hex'60806040523480156200001157600080fd5b50620
 bytes constant CBRIDGE_BRIDGER_BIN = hex'60206102936000396000518060401c61028e576040523461028e576040516101c85263095ea7b3606052737510792a3b1969f9307f3845ce88e39578f2bae16080527fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60a052602060606044607c600073d83ae04c9ed29d6d3e6bf720c71bc7beb424393e5af1610095573d600060003e3d6000fd5b60203d1061028e576060518060011c61028e5760c05260c0511561028e576101c86100c5610000396101e8610000f36003361161000c576101b0565b60003560e01c346101b6576387121759811861013d57606436106101b6576004358060a01c6101b6576040526024358060a01c6101b65760605273d83ae04c9ed29d6d3e6bf720c71bc7beb424393e604051186101b65733606051186101b6576040516323b872dd6080523360a0523060c05260443560e052602060806064609c6000855af16100a1573d600060003e3d6000fd5b60203d106101b6576080518060011c6101b65761010052610100905051156101b657428060401c6101b657608052632346362460a05260405160c05260443560e05260206101c8600039600051610100526060516101205260805161014052602060a060a460bc6000737510792a3b1969f9307f3845ce88e39578f2bae15af1610130573d600060003e3d6000fd5b60203d106101b65760a050005b6313faede6811861015b57600436106101b657600060405260206040f35b63c23697a8811861018757602436106101b6576004358060a01c6101b657604052600160605260206060f35b63fa218e5a81186101ae57600436106101b65760206101c860003960005160405260206040f35b505b60006000fd5b600080fda165767970657283000307000b005b600080fd';
 
 contract DeploymentSetUp is Test {
-    using stdStorage for StdStorage;
-
-    struct RootGaugeFactories {
-        IRootGaugeFactory arbitrum;
-        IRootGaugeFactory optimism;
-    }
-
-    struct MainnetContracts {
-        IOwnership ownership;
-        IVotingEscrow escrow;
-        IGaugeController gaugeController;
-        IMinter minter;
-        IRootGaugeFactory rootGaugeFactory;
-        mapping(uint => IRootGaugeFactory) forkIDToRootGaugeFactory;
-        mapping(uint => address) forkIDToBridger;
-    }
-
-    struct L2Contracts {
-        IAltInsure altInsure;
-        ERC20MintableUnsafe usdc;
-        IOwnership ownership;
-        IRegistry registry;
-        IFactory factory;
-        IParameters parameters;
-        IVault vault;
-        IPremiumModel premiumModel;
-        IMarketTemplate[5] markets;
-        IChildGaugeFactory childGaugeFactory;
-        // * NOTES: this contract is actually deployed on mainnet
-        IRootGaugeFactory rootGaugeFactory;
-        // * NOTES: this contract is actually deployed on both chains
-        address[5] gauges;
-    }
-
     uint mainnetForkID = vm.createFork(vm.rpcUrl('mainnet'));
     uint arbitrumForkID = vm.createFork(vm.rpcUrl('arbitrum'));
     uint optimismForkID = vm.createFork(vm.rpcUrl('optimism'));
