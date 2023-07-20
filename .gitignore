@@ -9,6 +9,7 @@ out/
 
 # Docs
 docs/
+documents/*.svg
 
 # CSV output
 /data
