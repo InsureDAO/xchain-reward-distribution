@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.10;
+
+address constant ARB_USDC = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
+address constant ARB_VAULT = 0x968C9718f420d5D4275C610C5c217598a6ade9f9;
+address constant MKT_GMX = 0xE1a9f0add0022f3fA35a3A605b699F64fbe374E1;
+address constant MKT_RADIANT = 0x2D9e9D7f23787163320Db40573A864eD99aB6406;
+address constant MKT_DOPEX = 0x2eD1BA8eE5C5749490717b7fEbfd43D1bC8F6a47;
