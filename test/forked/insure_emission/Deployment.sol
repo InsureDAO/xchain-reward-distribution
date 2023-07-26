@@ -9,6 +9,7 @@ import '../../shared/CreationCodes.sol';
 import '../../shared/Mainnet.sol';
 import '../../shared/Arbitrum.sol';
 import '../../shared/Optimism.sol';
+import '../../shared/Deploy.sol';
 
 // dao contracts
 import 'src/interfaces/IGaugeController.sol';
@@ -93,7 +94,7 @@ contract DeploymentSetUp is Test {
 
     function _altInsureDeploy(uint _forkID) internal {
         vm.selectFork(_forkID);
-        address _altInsureImpl = _deployCode(ALT_INSURE_V1_BIN);
+        address _altInsureImpl = Deploy.deployCode(ALT_INSURE_V1_BIN);
 
         vm.prank(admin);
         ERC1967Proxy _proxy = new ERC1967Proxy(
@@ -111,13 +112,13 @@ contract DeploymentSetUp is Test {
 
     function _arbGaugeDeploy() internal {
         vm.selectFork(mainnetForkID);
-        arbBridger = _deployCode(CBRIDGE_BRIDGER_BIN, abi.encode(42161));
+        arbBridger = Deploy.deployCode(CBRIDGE_BRIDGER_BIN, abi.encode(42161));
 
         // mainnet factory setup
         vm.startPrank(nonceAdjuster);
-        arbRootGaugeFactory = IRootGaugeFactory(_deployCode(RGF_BIN, abi.encode(ANYCALL, address(admin))));
+        arbRootGaugeFactory = IRootGaugeFactory(Deploy.deployCode(RGF_BIN, abi.encode(ANYCALL, address(admin))));
 
-        address _rgImpl = _deployCode(RG_BIN, abi.encode(L1_INSURE, address(GAUGE_CONTROLLER), address(MINTER)));
+        address _rgImpl = Deploy.deployCode(RG_BIN, abi.encode(L1_INSURE, address(GAUGE_CONTROLLER), address(MINTER)));
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -128,9 +129,11 @@ contract DeploymentSetUp is Test {
         // arbitrum factory setup
         vm.selectFork(arbitrumForkID);
         vm.startPrank(nonceAdjuster);
-        arbChildGaugeFactory = IChildGaugeFactory(_deployCode(CGF_BIN, abi.encode(ANYCALL, address(altInsure), admin)));
+        arbChildGaugeFactory = IChildGaugeFactory(
+            Deploy.deployCode(CGF_BIN, abi.encode(ANYCALL, address(altInsure), admin))
+        );
 
-        address _cgImpl = _deployCode(CG_BIN, abi.encode(address(altInsure), address(arbChildGaugeFactory)));
+        address _cgImpl = Deploy.deployCode(CG_BIN, abi.encode(address(altInsure), address(arbChildGaugeFactory)));
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -164,13 +167,13 @@ contract DeploymentSetUp is Test {
 
     function _optGaugeDeploy() internal {
         vm.selectFork(mainnetForkID);
-        arbBridger = _deployCode(CBRIDGE_BRIDGER_BIN, abi.encode(10));
+        arbBridger = Deploy.deployCode(CBRIDGE_BRIDGER_BIN, abi.encode(10));
 
         // mainnet factory setup
         vm.startPrank(nonceAdjuster);
-        optRootGaugeFactory = IRootGaugeFactory(_deployCode(RGF_BIN, abi.encode(ANYCALL, address(admin))));
+        optRootGaugeFactory = IRootGaugeFactory(Deploy.deployCode(RGF_BIN, abi.encode(ANYCALL, address(admin))));
 
-        address _rgImpl = _deployCode(RG_BIN, abi.encode(L1_INSURE, address(GAUGE_CONTROLLER), address(MINTER)));
+        address _rgImpl = Deploy.deployCode(RG_BIN, abi.encode(L1_INSURE, address(GAUGE_CONTROLLER), address(MINTER)));
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -181,9 +184,11 @@ contract DeploymentSetUp is Test {
         vm.selectFork(optimismForkID);
         // optimism factory setup
         vm.startPrank(nonceAdjuster);
-        optChildGaugeFactory = IChildGaugeFactory(_deployCode(CGF_BIN, abi.encode(ANYCALL, address(altInsure), admin)));
+        optChildGaugeFactory = IChildGaugeFactory(
+            Deploy.deployCode(CGF_BIN, abi.encode(ANYCALL, address(altInsure), admin))
+        );
 
-        address _cgImpl = _deployCode(CG_BIN, abi.encode(address(altInsure), address(optChildGaugeFactory)));
+        address _cgImpl = Deploy.deployCode(CG_BIN, abi.encode(address(altInsure), address(optChildGaugeFactory)));
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -209,23 +214,6 @@ contract DeploymentSetUp is Test {
         }
 
         vm.stopPrank();
-    }
-
-    function _deployCode(bytes memory code) internal returns (address addr) {
-        assembly {
-            addr := create(0, add(code, 0x20), mload(code))
-        }
-        require(addr.code.length != 0, 'deploy failed');
-    }
-
-    function _deployCode(bytes memory code, bytes memory data) internal returns (address addr) {
-        bytes memory _code = abi.encodePacked(code, data);
-
-        assembly {
-            addr := create(0, add(_code, 0x20), mload(_code))
-        }
-
-        require(addr.code.length != 0, 'deploy failed');
     }
 
     function _toChainID(uint _forkID) internal view returns (uint) {

@@ -1,6 +1,6 @@
 import { program } from 'commander'
-import { gaugeController } from './abi/gauge-controller'
-import { childGaugeFactory } from './abi/child-gauge-factory'
+import { gaugeController } from './constants/abi/gauge-controller'
+import { childGaugeFactory } from './constants/abi/child-gauge-factory'
 import { mkdir, mkdirSync, writeFileSync } from 'fs'
 import { getL2Client, getMainnetClient } from './utils/client'
 
@@ -18,11 +18,9 @@ const GAUGE_CONTROLLER = '0x297ea2afcE594149Cd31a9b11AdBAe82fa1Ddd04' // mainnet
 const CHILD_GAUGE_FACTORY = '0x00'
 
 async function main() {
-  if (!opts.chain)
-    throw new Error('chain name is required - use --chain <chain>')
+  if (!opts.chain) throw new Error('chain name is required - use --chain <chain>')
 
-  if (opts.fork && opts.testnet)
-    throw new Error('cannot use --fork and --testnet together')
+  if (opts.fork && opts.testnet) throw new Error('cannot use --fork and --testnet together')
 
   const mainnetClient = getMainnetClient(opts)
   const l2Client = getL2Client(opts)

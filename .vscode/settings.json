@@ -1,3 +1,15 @@
 {
-  "cSpell.words": ["arbitrum", "sepolia", "viem", "xchain"]
+  "cSpell.words": [
+    "ANYCALL",
+    "arbitrum",
+    "dopex",
+    "Keccak",
+    "nomicfoundation",
+    "nomiclabs",
+    "sepolia",
+    "typechain",
+    "viem",
+    "vyper",
+    "xchain"
+  ]
 }

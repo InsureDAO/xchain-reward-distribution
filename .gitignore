@@ -20,5 +20,17 @@ arbitrum.env
 mainnet.env
 optimism.env
 
-# node_modules
-node_modules/
+# Hardhat files
+cache_hardhat
+artifacts
+
+node_modules
+.env
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts

@@ -1,14 +1,7 @@
 import { OptionValues } from 'commander'
 import { createPublicClient, http } from 'viem'
-import {
-  arbitrum,
-  arbitrumGoerli,
-  mainnet,
-  optimism,
-  optimismGoerli,
-  sepolia,
-} from 'viem/chains'
-import { arbitrumFork, mainnetFork, optimismFork } from '../forks'
+import { arbitrum, arbitrumGoerli, mainnet, optimism, optimismGoerli, sepolia } from 'viem/chains'
+import { arbitrumFork, mainnetFork, optimismFork } from '../chains/forks'
 
 export function getMainnetClient(opts: OptionValues) {
   if (opts.testnet) {

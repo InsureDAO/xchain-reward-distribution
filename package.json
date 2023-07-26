@@ -9,8 +9,21 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "fork": "docker run ghcr.io/foundry-rs/foundry:latest",
-    "solc": "docker run -v $(pwd):/sources ethereum/solc:0.8.10"
+    "solc": "docker run -v $(pwd):/sources ethereum/solc:0.8.10",
+    "fork:up": "docker compose -f docker/docker-compose.yml up -d",
+    "fork:down": "docker compose -f docker/docker-compose.yml down",
+    "hardhat:compile": "npx hardhat compile --no-typechain && npx hardhat typechain",
+    "setup:mainnet": "npx hardhat run scripts/hardhat/setup.ts --network mainnetFork",
+    "setup:arb": "npx hardhat run scripts/hardhat/setup.ts --network arbitrumFork",
+    "setup:op": "npx hardhat run scripts/hardhat/setup.ts --network opFork",
+    "setup": "npm run setup:mainnet && npm run setup:arb && npm run setup:op",
+    "deploy:core-mainnet": "npx hardhat run scripts/hardhat/01.deploy-mainnet-core.ts --network mainnetFork",
+    "deploy:core-arb": "npx hardhat run scripts/hardhat/02.deploy-l2-core.ts --network arbitrumFork",
+    "deploy:core-op": "npx hardhat run scripts/hardhat/02.deploy-l2-core.ts --network opFork",
+    "deploy:root-arb": "TARGET=arbitrumFork npx hardhat run scripts/hardhat/03.deploy-root-gauges.ts --network mainnetFork",
+    "deploy:root-op": "TARGET=optimismFork npx hardhat run scripts/hardhat/03.deploy-root-gauges.ts --network mainnetFork",
+    "deploy:child-arb": "npx hardhat run scripts/hardhat/04.deploy-child-gauges.ts --network arbitrumFork",
+    "deploy:child-op": "npx hardhat run scripts/hardhat/04.deploy-child-gauges.ts --network opFork"
   },
   "repository": {
     "type": "git",
@@ -27,7 +40,12 @@
     "viem": "^1.2.9"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-foundry": "^1.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomiclabs/hardhat-vyper": "^3.0.3",
     "@types/node": "^20.3.3",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.17.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
