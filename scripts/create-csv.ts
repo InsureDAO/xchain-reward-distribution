@@ -1,32 +1,40 @@
 import { program } from 'commander'
 import { gaugeController } from './constants/abi/gauge-controller'
 import { childGaugeFactory } from './constants/abi/child-gauge-factory'
-import { mkdir, mkdirSync, writeFileSync } from 'fs'
+import { mkdirSync, writeFileSync } from 'fs'
 import { getL2Client, getMainnetClient } from './utils/client'
 
 program
   .option('-c, --chain <chain>', 'chain name')
   .option('-f, --fork', 'use fork')
   .option('-t, --testnet', 'use testnet')
+  .option('-cgf, --child-gauge-factory <address>', 'child gauge factory address')
 program.parse()
 
 const opts = program.opts()
 
 // TODO: add support for other chains
 const GAUGE_CONTROLLER = '0x297ea2afcE594149Cd31a9b11AdBAe82fa1Ddd04' // mainnet
-// TODO: add support for multiple chains
-const CHILD_GAUGE_FACTORY = '0x00'
 
 async function main() {
-  if (!opts.chain) throw new Error('chain name is required - use --chain <chain>')
+  const { chain, fork, testnet, childGaugeFactory: cgf } = opts
 
-  if (opts.fork && opts.testnet) throw new Error('cannot use --fork and --testnet together')
+  if (!chain) throw new Error('chain name is required - use --chain <chain>')
+  if (!cgf) throw new Error('child gauge factory address is required - use --child-gauge-factory <address>')
+  if (fork && testnet) throw new Error('cannot use --fork and --testnet together')
+
+  console.log({
+    chain,
+    fork,
+    testnet,
+    childGaugeFactory: cgf,
+  })
 
   const mainnetClient = getMainnetClient(opts)
   const l2Client = getL2Client(opts)
 
   const gaugeCount = await l2Client.readContract({
-    address: '0x00',
+    address: cgf,
     abi: childGaugeFactory,
     functionName: 'get_gauge_count',
   })
@@ -37,11 +45,13 @@ async function main() {
 
   for (let i = 0; i < gaugeCount; i++) {
     const gauge = await l2Client.readContract({
-      address: '0x00',
+      address: cgf,
       abi: childGaugeFactory,
       functionName: 'get_gauge',
       args: [BigInt(i)],
     })
+
+    console.log(`gauge ${i}: ${gauge}`)
 
     const weight = await mainnetClient.readContract({
       address: GAUGE_CONTROLLER,
@@ -49,6 +59,8 @@ async function main() {
       functionName: 'get_gauge_weight',
       args: [gauge],
     })
+
+    console.log(`weight ${i}: ${weight}`)
 
     totalWeight += weight
 
@@ -66,7 +78,7 @@ async function main() {
 
   mkdirSync('./data', { recursive: true })
 
-  const filename = `./data/${opts.chain}-gauge-weights.csv`
+  const filename = `./data/${opts.chain}-gauge-weights-${cgf}.csv`
 
   console.log(`writing ${filename}`)
 

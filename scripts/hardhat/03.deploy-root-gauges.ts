@@ -4,7 +4,7 @@ import { writeFileSync } from 'fs'
 
 async function main() {
   const target = process.env.TARGET
-  if (!target) throw new Error('Please specify the target address with the TARGET environment variable')
+  if (!target) throw new Error('Please specify the target chain with the TARGET environment variable')
 
   const [admin] = await ethers.getSigners()
   const { default: core } = (await import(`./deployed/core/${network.name}.json`)) as {

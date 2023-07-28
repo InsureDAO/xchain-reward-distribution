@@ -1,10 +1,16 @@
-import { HardhatUserConfig } from 'hardhat/config'
+import { HardhatUserConfig, extendEnvironment } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomicfoundation/hardhat-foundry'
 import '@nomiclabs/hardhat-vyper'
 import * as dotenv from 'dotenv'
+import { HttpNetworkConfig } from 'hardhat/types'
 
 dotenv.config()
+
+extendEnvironment((hre) => {
+  const config = hre.network.config as HttpNetworkConfig
+  config.accounts = 'remote'
+})
 
 const config: HardhatUserConfig = {
   networks: {
