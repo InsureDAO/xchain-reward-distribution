@@ -1,4 +1,4 @@
-const childGauge = [
+export const childGauge = [
   {
     name: 'Approval',
     inputs: [

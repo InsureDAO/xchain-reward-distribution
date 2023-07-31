@@ -23,13 +23,6 @@ async function main() {
   if (!cgf) throw new Error('child gauge factory address is required - use --child-gauge-factory <address>')
   if (fork && testnet) throw new Error('cannot use --fork and --testnet together')
 
-  console.log({
-    chain,
-    fork,
-    testnet,
-    childGaugeFactory: cgf,
-  })
-
   const mainnetClient = getMainnetClient(opts)
   const l2Client = getL2Client(opts)
 
