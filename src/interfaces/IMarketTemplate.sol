@@ -8,31 +8,19 @@ interface IMarketTemplate {
         Payingout
     }
 
+    function vault() external view returns (address);
+
     function deposit(uint256 _amount) external returns (uint256 _mintAmount);
 
     function requestWithdraw(uint256 _amount) external;
 
     function withdraw(uint256 _amount) external returns (uint256 _retVal);
 
-    function insure(
-        uint256,
-        uint256,
-        uint256,
-        bytes32,
-        address,
-        address
-    ) external returns (uint256);
+    function insure(uint256, uint256, uint256, bytes32, address, address) external returns (uint256);
 
-    function redeem(
-        uint256 _id,
-        uint256 _loss,
-        bytes32[] calldata _merkleProof
-    ) external;
+    function redeem(uint256 _id, uint256 _loss, bytes32[] calldata _merkleProof) external;
 
-    function getPremium(
-        uint256 _amount,
-        uint256 _span
-    ) external view returns (uint256);
+    function getPremium(uint256 _amount, uint256 _span) external view returns (uint256);
 
     function unlockBatch(uint256[] calldata _ids) external;
 
@@ -42,13 +30,9 @@ interface IMarketTemplate {
 
     function unregisterIndex() external;
 
-    function allocateCredit(
-        uint256 _credit
-    ) external returns (uint256 _mintAmount);
+    function allocateCredit(uint256 _credit) external returns (uint256 _mintAmount);
 
-    function pairValues(
-        address _index
-    ) external view returns (uint256, uint256);
+    function pairValues(address _index) external view returns (uint256, uint256);
 
     function resume() external;
 
@@ -85,9 +69,5 @@ interface IMarketTemplate {
         string calldata _memo
     ) external;
 
-    function applyBounty(
-        uint256 _amount,
-        address _contributor,
-        uint256[] calldata _ids
-    ) external;
+    function applyBounty(uint256 _amount, address _contributor, uint256[] calldata _ids) external;
 }
