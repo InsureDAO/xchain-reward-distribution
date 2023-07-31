@@ -1,11 +1,14 @@
 import { ethers } from 'hardhat'
 import { GAUGE_CONTROLLER, L1_DAO_OWNERSHIP_OWNER } from '../constants/addresses'
-import { impersonate } from './fork/helpers'
+import { getSigners } from './fork/helpers'
 
 const GAUGE_TYPE = 1
 
 async function main() {
-  const [admin] = await ethers.getSigners()
+  const MODE = process.env.MODE
+  if (!MODE) throw new Error('Please specify the mode with the MODE environment variable')
+
+  const [admin] = await getSigners(MODE)
   const target = process.env.TARGET
   if (!target) throw new Error('Please specify the target chain with the TARGET environment variable')
   const mode = process.env.MODE ?? 'live'

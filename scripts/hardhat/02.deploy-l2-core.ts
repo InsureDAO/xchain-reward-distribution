@@ -1,13 +1,15 @@
 import { ethers, network } from 'hardhat'
 import { ALT_INSURE_ARB, ALT_INSURE_OP, ANYCALL_PROXY } from '../constants/addresses'
 import { writeFileSync } from 'fs'
+import { getSigners } from './fork/helpers'
 
 async function main() {
-  const [admin, adjuster] = await ethers.getSigners()
-  const altInsureAddress = getAltInsureAddress(network.name)
+  const MODE = process.env.MODE
+  if (!MODE) throw new Error('Please specify the mode with the MODE environment variable')
 
-  const nonce = await adjuster.getNonce()
-  console.log({ nonce })
+  const [admin, adjuster] = await getSigners(MODE)
+
+  const altInsureAddress = getAltInsureAddress(network.name)
 
   const ChildGaugeFactory = await ethers.getContractFactory('ChildGaugeFactory', adjuster)
   const ChildGauge = await ethers.getContractFactory('ChildGauge', admin)

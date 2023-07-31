@@ -1,9 +1,13 @@
 import { ethers, network } from 'hardhat'
 import { solidityPackedKeccak256 } from 'ethers'
 import { writeFileSync } from 'fs'
+import { getSigners } from './fork/helpers'
 
 async function main() {
-  const [admin] = await ethers.getSigners()
+  const MODE = process.env.MODE
+  if (!MODE) throw new Error('Please specify the mode with the MODE environment variable')
+
+  const [admin] = await getSigners(MODE)
   const { default: core } = (await import(`./deployed/core/${network.name}.json`)) as {
     default: { [key: string]: string }
   }

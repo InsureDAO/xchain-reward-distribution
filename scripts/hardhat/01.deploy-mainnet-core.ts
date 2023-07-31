@@ -1,14 +1,16 @@
 import { writeFileSync } from 'fs'
 import { ethers, network } from 'hardhat'
 import { ANYCALL_PROXY, GAUGE_CONTROLLER, INSURE, MINTER } from '../constants/addresses'
+import { getSigners } from './fork/helpers'
 
 const CHAIN_ID_ARBITRUM = 42161
 const CHAIN_ID_OP = 10
 
 async function main() {
-  const [admin, adjuster] = await ethers.getSigners()
-  const nonce = await adjuster.getNonce()
-  console.log({ nonce })
+  const MODE = process.env.MODE
+  if (!MODE) throw new Error('Please specify the mode with the MODE environment variable')
+
+  const [admin, adjuster] = await getSigners(MODE)
 
   const RootGaugeFactory = await ethers.getContractFactory('RootGaugeFactory', adjuster)
   const RootGauge = await ethers.getContractFactory('RootGauge', admin)
