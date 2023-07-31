@@ -9,7 +9,7 @@ export function setBalance(address: string, balance: bigint) {
 }
 
 export function impersonate(address: string) {
-  const config = network.config as HardhatNetworkUserConfig
+  // const config = network.config as HardhatNetworkUserConfig
   return network.provider.request({
     method: 'anvil_impersonateAccount',
     params: [address],

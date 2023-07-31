@@ -7,10 +7,10 @@ import { HttpNetworkConfig } from 'hardhat/types'
 
 dotenv.config()
 
-extendEnvironment((hre) => {
-  const config = hre.network.config as HttpNetworkConfig
-  config.accounts = 'remote'
-})
+// extendEnvironment((hre) => {
+//   const config = hre.network.config as HttpNetworkConfig
+//   config.accounts = 'remote'
+// })
 
 const config: HardhatUserConfig = {
   networks: {

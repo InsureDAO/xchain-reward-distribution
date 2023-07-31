@@ -1,6 +1,7 @@
 import { ethers, network } from 'hardhat'
 import { solidityPackedKeccak256 } from 'ethers'
 import { writeFileSync } from 'fs'
+import { chains } from './config/chains'
 
 async function main() {
   const target = process.env.TARGET
@@ -17,8 +18,10 @@ async function main() {
 
   const out: { [key: string]: string } = {}
 
+  const chainID = chains[target].chainID
+  if (!chainID) throw new Error(`Unknown chain ${target}`)
+
   for (const [name, address] of Object.entries(markets)) {
-    const chainID = chainNameToID(target)
     const salt = solidityPackedKeccak256(['address'], [address])
 
     const gauge = await factory.connect(admin).deploy_gauge.staticCall(chainID, salt)
@@ -34,16 +37,16 @@ async function main() {
   writeFileSync(`${__dirname}/deployed/gauges/root-gauges.${target}.json`, outJSON)
 }
 
-function chainNameToID(name: string): number {
-  switch (name) {
-    case 'arbitrumFork':
-      return 42161
-    case 'opFork':
-      return 10
-    default:
-      throw new Error(`Unknown chain ${name}`)
-  }
-}
+// function chainNameToID(name: string): number {
+//   switch (name) {
+//     case 'arbitrumFork':
+//       return 42161
+//     case 'opFork':
+//       return 10
+//     default:
+//       throw new Error(`Unknown chain ${name}`)
+//   }
+// }
 
 main().catch((err) => {
   console.error(err)

@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat'
 import { GAUGE_CONTROLLER } from '../../constants/addresses'
+import { chains } from '../config/chains'
 
 async function main() {
   const [admin] = await ethers.getSigners()
@@ -16,7 +17,14 @@ async function main() {
   }
 
   const factory = await ethers.getContractAt('RootGaugeFactory', core.rootGaugeFactory, admin)
-  const gaugeController = await ethers.getContractAt('GaugeController', GAUGE_CONTROLLER, admin)
+  const gc = await ethers.getContractAt('IGaugeController', GAUGE_CONTROLLER, admin)
+  const chainID = chains[target].chainID
+
+  if (!chainID) throw new Error(`Unknown chain ${target}`)
+
+  for (const [name, address] of Object.entries(gauges)) {
+    gc.vote_for_gauge_weights(address, 0)
+  }
 }
 
 main().catch((err) => {

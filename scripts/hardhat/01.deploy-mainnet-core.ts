@@ -7,6 +7,8 @@ const CHAIN_ID_OP = 10
 
 async function main() {
   const [admin, adjuster] = await ethers.getSigners()
+  const nonce = await adjuster.getNonce()
+  console.log({ nonce })
 
   const RootGaugeFactory = await ethers.getContractFactory('RootGaugeFactory', adjuster)
   const RootGauge = await ethers.getContractFactory('RootGauge', admin)

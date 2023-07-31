@@ -7,6 +7,7 @@ export const MINTER = '0x76E8B82EA3450fA598E5e164c7E28af172deBDC0'
 // arbitrum contracts
 // TODO: replace with actual addresses
 export const ALT_INSURE_ARB = '0xd83AE04c9eD29d6D3E6Bf720C71bc7BeB424393E'
+export const ARB_USDC = '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'
 
 // arbitrum contracts
 // TODO: replace with actual addresses

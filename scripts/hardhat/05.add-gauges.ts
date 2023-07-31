@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat'
 import { GAUGE_CONTROLLER, L1_DAO_OWNERSHIP_OWNER } from '../constants/addresses'
+import { impersonate } from './fork/helpers'
 
 const GAUGE_TYPE = 1
 
@@ -25,7 +26,12 @@ async function main() {
 
     if (!weight) throw new Error(`no weight found for ${name}`)
 
+    // if (mode === 'fork') {
+    //   await impersonate(L1_DAO_OWNERSHIP_OWNER)
+    // }
+
     const signer = mode === 'fork' ? await ethers.getImpersonatedSigner(L1_DAO_OWNERSHIP_OWNER) : admin
+    // const signer = mode === 'fork' ? await ethers.getSigner(L1_DAO_OWNERSHIP_OWNER) : admin
 
     await gc
       .connect(signer)

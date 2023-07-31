@@ -6,6 +6,9 @@ async function main() {
   const [admin, adjuster] = await ethers.getSigners()
   const altInsureAddress = getAltInsureAddress(network.name)
 
+  const nonce = await adjuster.getNonce()
+  console.log({ nonce })
+
   const ChildGaugeFactory = await ethers.getContractFactory('ChildGaugeFactory', adjuster)
   const ChildGauge = await ethers.getContractFactory('ChildGauge', admin)
 
