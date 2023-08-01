@@ -1,5 +1,5 @@
 import { OptionValues } from 'commander'
-import { createPublicClient, http } from 'viem'
+import { createPublicClient, http, publicActions, walletActions } from 'viem'
 import { arbitrum, arbitrumGoerli, mainnet, optimism, optimismGoerli, sepolia } from 'viem/chains'
 import { arbitrumFork, mainnetFork, optimismFork } from '../chains/forks'
 
@@ -8,7 +8,7 @@ export function getMainnetClient(opts: OptionValues) {
     return createPublicClient({
       chain: sepolia,
       transport: http(),
-    })
+    }).extend(walletActions)
   }
 
   if (opts.fork)
@@ -20,7 +20,7 @@ export function getMainnetClient(opts: OptionValues) {
   return createPublicClient({
     chain: mainnet,
     transport: http(),
-  })
+  }).extend(walletActions)
 }
 
 export function getArbitrumClient(opts: OptionValues) {
@@ -28,18 +28,18 @@ export function getArbitrumClient(opts: OptionValues) {
     return createPublicClient({
       chain: arbitrumGoerli,
       transport: http(),
-    })
+    }).extend(walletActions)
 
   if (opts.fork)
     return createPublicClient({
       chain: arbitrumFork,
       transport: http(),
-    })
+    }).extend(walletActions)
 
   return createPublicClient({
     chain: arbitrum,
     transport: http(),
-  })
+  }).extend(walletActions)
 }
 
 export function getOptimismClient(opts: OptionValues) {
@@ -47,18 +47,18 @@ export function getOptimismClient(opts: OptionValues) {
     return createPublicClient({
       chain: optimismGoerli,
       transport: http(),
-    })
+    }).extend(walletActions)
 
   if (opts.fork)
     return createPublicClient({
       chain: optimismFork,
       transport: http(),
-    })
+    }).extend(walletActions)
 
   return createPublicClient({
     chain: optimism,
     transport: http(),
-  })
+  }).extend(walletActions)
 }
 
 export function getL2Client(opts: OptionValues) {

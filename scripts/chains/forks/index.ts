@@ -2,6 +2,7 @@ import { Chain, foundry } from 'viem/chains'
 
 export const mainnetFork: Chain = {
   ...foundry,
+  id: 1,
   name: 'mainnet-fork',
   rpcUrls: {
     default: {
@@ -15,6 +16,7 @@ export const mainnetFork: Chain = {
 
 export const arbitrumFork: Chain = {
   ...foundry,
+  id: 42161,
   name: 'arbitrum-fork',
   rpcUrls: {
     default: {
@@ -28,6 +30,7 @@ export const arbitrumFork: Chain = {
 
 export const optimismFork: Chain = {
   ...foundry,
+  id: 10,
   name: 'optimism-fork',
   rpcUrls: {
     default: {

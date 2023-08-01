@@ -27,10 +27,12 @@
     "deploy:child-arb": "MODE=fork npx hardhat run scripts/hardhat/04.deploy-child-gauges.ts --network arbitrumFork",
     "deploy:child-op": "MODE=fork npx hardhat run scripts/hardhat/04.deploy-child-gauges.ts --network opFork",
     "add-gauges:arb": "MODE=fork TARGET=arbitrumFork hardhat run scripts/hardhat/05.add-gauges.ts --network mainnetFork",
+    "add-reward:arb": "MODE=fork REWARD_TOKEN=\"0x912CE59144191C1204E64559FE8253a0e49E6548\" hardhat run scripts/hardhat/06.add-reward.ts --network arbitrumFork",
     "all:arb": "npm run deploy:core-mainnet && npm run deploy:core-arb && npm run deploy:root-arb && npm run deploy:child-arb && npm run add-gauges:arb",
     "deposit:arbFork": "npx hardhat run scripts/hardhat/fork/deposit.ts --network arbitrumFork",
     "vote:arbFork": "TARGET=arbitrumFork npx hardhat run scripts/hardhat/fork/vote.ts --network mainnetFork",
-    "csv:arbFork": "npx ts-node scripts/create-csv.ts -c arbitrum -f -cgf $CHILD_GAUGE_FACTORY"
+    "csv:arbFork": "npx ts-node scripts/create-csv.ts -c arbitrum -f -cgf $CHILD_GAUGE_FACTORY",
+    "deposit-reward:arbFork": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/deposit-reward.ts -c arbitrum -f -r \"0x912CE59144191C1204E64559FE8253a0e49E6548\" -a \"1000\" -i data/arbitrum-gauge-weights-0x7f78aa3F4336025aa3B83DB61566727720C18903.csv"
   },
   "repository": {
     "type": "git",

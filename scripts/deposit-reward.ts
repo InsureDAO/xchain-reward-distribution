@@ -1,9 +1,9 @@
 import { program } from 'commander'
-import { getL2Client } from './utils/client'
 import * as csv from 'csvtojson'
 import { privateKeyToAccount } from 'viem/accounts'
 import { childGauge } from './constants/abi/child-gauge'
-import { createWalletClient, http } from 'viem'
+import { getL2Client } from './utils/client'
+import { parseEther } from 'viem'
 
 program
   .option('-c, --chain <chain>', 'chain name')
@@ -27,10 +27,6 @@ async function main() {
   if (fork && testnet) throw new Error('cannot use --fork and --testnet together')
 
   const l2Client = getL2Client(opts)
-  const walletClient = createWalletClient({
-    chain: l2Client.chain,
-    transport: http(),
-  })
 
   const depositorKey = process.env.DEPOSITOR_KEY
   if (!depositorKey) throw new Error('DEPOSITOR_KEY env var is required')
@@ -40,15 +36,19 @@ async function main() {
   const rows = (await csv.default().fromFile(input)) as { gauge: string; weight: string; totalWeight: string }[]
 
   for (const row of rows) {
+    const rate = (BigInt(row.weight) * BigInt(parseEther(amount))) / BigInt(row.totalWeight)
+    console.log({ rate: rate })
+
     const { request } = await l2Client.simulateContract({
       account,
       address: row.gauge as `0x${string}`,
       abi: childGauge,
       functionName: 'deposit_reward_token',
-      args: [rewardToken, BigInt(amount)],
+      args: [rewardToken, rate],
     })
 
-    await walletClient.writeContract(request)
+    const hash = await l2Client.writeContract({ ...request })
+    await l2Client.waitForTransactionReceipt({ hash })
   }
 }
 

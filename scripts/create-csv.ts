@@ -3,6 +3,7 @@ import { gaugeController } from './constants/abi/gauge-controller'
 import { childGaugeFactory } from './constants/abi/child-gauge-factory'
 import { mkdirSync, writeFileSync } from 'fs'
 import { getL2Client, getMainnetClient } from './utils/client'
+import { GAUGE_CONTROLLER } from './constants/addresses'
 
 program
   .option('-c, --chain <chain>', 'chain name')
@@ -12,9 +13,6 @@ program
 program.parse()
 
 const opts = program.opts()
-
-// TODO: add support for other chains
-const GAUGE_CONTROLLER = '0x297ea2afcE594149Cd31a9b11AdBAe82fa1Ddd04' // mainnet
 
 async function main() {
   const { chain, fork, testnet, childGaugeFactory: cgf } = opts
@@ -60,8 +58,8 @@ async function main() {
     csv.push([gauge, weight.toString()])
   }
 
-  for (const row of csv) {
-    row.push(totalWeight.toString())
+  for (let i = 1; i < csv.length; i++) {
+    csv[i].push(totalWeight.toString())
   }
 
   let csvString = ''
