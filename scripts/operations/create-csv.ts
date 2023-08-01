@@ -69,7 +69,9 @@ async function main() {
 
   mkdirSync('./data', { recursive: true })
 
-  const filename = `./data/${opts.chain}-gauge-weights-${cgf}.csv`
+  const now = new Date()
+  const dateTime = now.toISOString().replace(/[:T-]/g, '').split('.')[0]
+  const filename = `./data/${dateTime}-${l2Client.chain.name}-gauge-weights-${cgf}.csv`
 
   console.log(`writing ${filename}`)
 
