@@ -1,9 +1,9 @@
 import { program } from 'commander'
 import * as csv from 'csvtojson'
 import { privateKeyToAccount } from 'viem/accounts'
-import { childGauge } from './constants/abi/child-gauge'
+import { childGauge } from '../constants/abi/child-gauge'
 import { getL2Client } from './utils/client'
-import { parseEther } from 'viem'
+import { formatEther, parseEther } from 'viem'
 
 program
   .option('-c, --chain <chain>', 'chain name')
@@ -37,7 +37,6 @@ async function main() {
 
   for (const row of rows) {
     const rate = (BigInt(row.weight) * BigInt(parseEther(amount))) / BigInt(row.totalWeight)
-    console.log({ rate: rate })
 
     const { request } = await l2Client.simulateContract({
       account,
@@ -47,8 +46,10 @@ async function main() {
       args: [rewardToken, rate],
     })
 
-    const hash = await l2Client.writeContract({ ...request })
+    const hash = await l2Client.writeContract(request)
     await l2Client.waitForTransactionReceipt({ hash })
+
+    console.log(`deposited ${formatEther(rate)} (unit = ether) token to ${row.gauge}`)
   }
 }
 

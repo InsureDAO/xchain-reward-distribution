@@ -21,15 +21,9 @@ interface IChildGauge {
 
     function claimable_tokens(address _addr) external returns (uint);
 
-    function claimed_reward(
-        address _addr,
-        address _token
-    ) external returns (uint);
+    function claimed_reward(address _addr, address _token) external returns (uint);
 
-    function claimable_rewarad(
-        address _user,
-        address _reward_token
-    ) external returns (uint);
+    function claimable_rewarad(address _user, address _reward_token) external returns (uint);
 
     function set_rewards_receiver(address _receiver) external;
 
@@ -41,13 +35,7 @@ interface IChildGauge {
 
     function add_reward(address _reward_token, address _distributor) external;
 
-    function set_reward_distributor(
-        address _reward_token,
-        address _distributor
-    ) external;
+    function set_reward_distributor(address _reward_token, address _distributor) external;
 
-    function deposito_reward_token(
-        address _reward_token,
-        uint _amount
-    ) external;
+    function deposit_reward_token(address _reward_token, uint _amount) external;
 }

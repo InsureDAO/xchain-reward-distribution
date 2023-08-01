@@ -1,9 +1,9 @@
 import { program } from 'commander'
-import { gaugeController } from './constants/abi/gauge-controller'
-import { childGaugeFactory } from './constants/abi/child-gauge-factory'
+import { gaugeController } from '../constants/abi/gauge-controller'
+import { childGaugeFactory } from '../constants/abi/child-gauge-factory'
 import { mkdirSync, writeFileSync } from 'fs'
 import { getL2Client, getMainnetClient } from './utils/client'
-import { GAUGE_CONTROLLER } from './constants/addresses'
+import { GAUGE_CONTROLLER } from '../constants/addresses'
 
 program
   .option('-c, --chain <chain>', 'chain name')

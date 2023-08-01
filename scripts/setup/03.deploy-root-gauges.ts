@@ -29,7 +29,7 @@ async function main() {
   for (const [name, address] of Object.entries(markets)) {
     const salt = solidityPackedKeccak256(['address'], [address])
 
-    const gauge = await factory.connect(admin).deploy_gauge.staticCall(chainID, salt)
+    const gauge = await factory.deploy_gauge.staticCall(chainID, salt)
     await factory.deploy_gauge(chainID, salt).then((tx) => tx.wait())
 
     out[name] = gauge

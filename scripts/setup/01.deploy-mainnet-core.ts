@@ -19,6 +19,11 @@ async function main() {
   const rootGaugeFactory = await RootGaugeFactory.deploy(ANYCALL_PROXY, admin).then((c) => c.waitForDeployment())
   const rootGaugeImpl = await RootGauge.deploy(INSURE, GAUGE_CONTROLLER, MINTER).then((c) => c.waitForDeployment())
 
+  await rootGaugeFactory
+    .connect(admin)
+    .set_implementation(rootGaugeImpl.target)
+    .then((tx) => tx.wait())
+
   const arbBridger = await Bridger.deploy(CHAIN_ID_ARBITRUM).then((c) => c.waitForDeployment())
   const opBridger = await Bridger.deploy(CHAIN_ID_OP).then((c) => c.waitForDeployment())
 

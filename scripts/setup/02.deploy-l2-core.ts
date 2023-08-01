@@ -21,6 +21,11 @@ async function main() {
     c.waitForDeployment()
   )
 
+  await childGaugeFactory
+    .connect(admin)
+    .set_implementation(childGaugeImpl.target)
+    .then((tx) => tx.wait())
+
   const out = JSON.stringify(
     {
       childGaugeFactory: childGaugeFactory.target,

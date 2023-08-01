@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { getSigners } from './hardhat/fork/helpers'
+import { getSigners } from './setup/fork/helpers'
 import { ARB_TOKEN } from './constants/addresses'
 
 async function main() {

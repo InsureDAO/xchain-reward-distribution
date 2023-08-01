@@ -1,8 +1,8 @@
 import { Account, createWalletClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { arbitrumFork, mainnetFork } from '../chains/forks'
+import { arbitrumFork, mainnetFork } from '../operations/chains/forks'
 import { childGaugeFactory } from '../constants/abi/child-gauge-factory'
-import { getArbitrumClient, getMainnetClient } from '../utils/client'
+import { getArbitrumClient, getMainnetClient } from '../operations/utils/client'
 import { rootGaugeFactory } from '../constants/abi/root-gauge-factory'
 
 // TODO: replace with hardhat
