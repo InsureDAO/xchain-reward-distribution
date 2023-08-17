@@ -1,5 +1,4 @@
-import { ethers } from 'hardhat'
-import { GAUGE_CONTROLLER, L1_DAO_OWNERSHIP_OWNER } from '../constants/addresses'
+import { ethers, network } from 'hardhat'
 import { getSigners } from './fork/helpers'
 
 const GAUGE_TYPE = 1
@@ -13,7 +12,11 @@ async function main() {
   if (!target) throw new Error('Please specify the target chain with the TARGET environment variable')
   const mode = process.env.MODE ?? 'live'
 
-  const gc = await ethers.getContractAt('IGaugeController', GAUGE_CONTROLLER, admin)
+  const { default: addresses } = (await import(`../constants/addresses/${network.name}.json`)) as {
+    default: { [key: string]: string }
+  }
+
+  const gc = await ethers.getContractAt('IGaugeController', addresses.GAUGE_CONTROLLER, admin)
 
   const { default: gauges } = (await import(`./deployed/gauges/root-gauges.${target}.json`)) as {
     default: { [key: string]: string }
@@ -29,12 +32,7 @@ async function main() {
 
     if (!weight) throw new Error(`no weight found for ${name}`)
 
-    // if (mode === 'fork') {
-    //   await impersonate(L1_DAO_OWNERSHIP_OWNER)
-    // }
-
-    const signer = mode === 'fork' ? await ethers.getImpersonatedSigner(L1_DAO_OWNERSHIP_OWNER) : admin
-    // const signer = mode === 'fork' ? await ethers.getSigner(L1_DAO_OWNERSHIP_OWNER) : admin
+    const signer = mode === 'fork' ? await ethers.getImpersonatedSigner(addresses.L1_DAO_OWNERSHIP_OWNER) : admin
 
     await gc
       .connect(signer)

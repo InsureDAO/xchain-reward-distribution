@@ -17,6 +17,16 @@ const config: HardhatUserConfig = {
     opFork: {
       url: 'http://localhost:8547',
     },
+    goerli: {
+      url: process.env.GOERLI_RPC_URL,
+      accounts: [process.env.ADMIN_KEY!, process.env.NONCE_ADJUSTER_KEY!],
+    },
+    opGoerli: {
+      url: process.env.OP_GOERLI_RPC_URL,
+      accounts: [process.env.ADMIN_KEY!, process.env.NONCE_ADJUSTER_KEY!],
+      // NOTES: Workaround for ProviderError: transaction underpriced
+      gasPrice: 200000000,
+    },
   },
   solidity: {
     compilers: [
