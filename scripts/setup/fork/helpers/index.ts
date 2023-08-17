@@ -20,8 +20,8 @@ export function getSigners(mode: string) {
   const adminAddr = ethers.computeAddress(`0x${adminKey}`)
   const adjusterAddr = ethers.computeAddress(`0x${adjusterKey}`)
 
-  const admin = mode === 'fork' ? ethers.getImpersonatedSigner(adminAddr) : ethers.getSigner(adminKey)
-  const adjuster = mode === 'fork' ? ethers.getImpersonatedSigner(adjusterAddr) : ethers.getSigner(adjusterKey)
+  const admin = mode === 'fork' ? ethers.getImpersonatedSigner(adminAddr) : ethers.getSigner(adminAddr)
+  const adjuster = mode === 'fork' ? ethers.getImpersonatedSigner(adjusterAddr) : ethers.getSigner(adjusterAddr)
 
   return Promise.all([admin, adjuster])
 }

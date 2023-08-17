@@ -8,4 +8,7 @@ export const chains: Record<string, ChainConfig> = {
   opFork: {
     chainID: 10,
   },
+  opGoerli: {
+    chainID: 420,
+  },
 }
