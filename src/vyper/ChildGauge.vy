@@ -647,7 +647,7 @@ def decimals() -> uint256:
     """
     @notice Returns the number of decimals the token uses
     """
-    return 18
+    return 6
 
 
 @view
@@ -678,7 +678,7 @@ def initialize(_lp_token: address, _manager: address):
     self.voting_escrow = Factory(msg.sender).voting_escrow()
 
     symbol: String[26] = ERC20Extended(_lp_token).symbol()
-    name: String[64] = concat("Curve.fi ", symbol, " Gauge Deposit")
+    name: String[64] = concat("InsureDAO ", symbol, " Gauge Deposit")
 
     self.name = name
     self.symbol = concat(symbol, "-gauge")
