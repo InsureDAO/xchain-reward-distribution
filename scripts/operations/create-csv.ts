@@ -3,26 +3,35 @@ import { gaugeController } from '../constants/abi/gauge-controller'
 import { childGaugeFactory } from '../constants/abi/child-gauge-factory'
 import { mkdirSync, writeFileSync } from 'fs'
 import { getL2Client, getMainnetClient } from './utils/client'
-import { GAUGE_CONTROLLER } from '../constants/addresses'
 
 program
   .option('-c, --chain <chain>', 'chain name')
   .option('-f, --fork', 'use fork')
   .option('-t, --testnet', 'use testnet')
-  .option('-cgf, --child-gauge-factory <address>', 'child gauge factory address')
 program.parse()
 
 const opts = program.opts()
 
 async function main() {
-  const { chain, fork, testnet, childGaugeFactory: cgf } = opts
+  const { chain, fork, testnet } = opts
 
   if (!chain) throw new Error('chain name is required - use --chain <chain>')
-  if (!cgf) throw new Error('child gauge factory address is required - use --child-gauge-factory <address>')
   if (fork && testnet) throw new Error('cannot use --fork and --testnet together')
 
   const mainnetClient = getMainnetClient(opts)
   const l2Client = getL2Client(opts)
+
+  const { default: l1Addresses } = (await import(`../constants/addresses/${mainnetClient.name}.json`)) as {
+    default: { [key: string]: `0x${string}` }
+  }
+  const gaugeControllerAddress = l1Addresses.GAUGE_CONTROLLER
+  if (!gaugeControllerAddress) throw new Error('GAUGE_CONTROLLER not found')
+
+  const { default: core } = (await import(`../setup/deployed/core/${l2Client.name}.json`)) as {
+    default: { [key: string]: `0x${string}` }
+  }
+  const cgf = core.childGaugeFactory
+  if (!cgf) throw new Error('childGaugeFactory not found')
 
   const gaugeCount = await l2Client.readContract({
     address: cgf,
@@ -30,9 +39,7 @@ async function main() {
     functionName: 'get_gauge_count',
   })
 
-  let totalWeight = BigInt(0)
-
-  const csv = [['gauge', 'weight', 'totalWeight']]
+  const csv = [['gauge', 'weight']]
 
   for (let i = 0; i < gaugeCount; i++) {
     const gauge = await l2Client.readContract({
@@ -44,22 +51,20 @@ async function main() {
 
     console.log(`gauge ${i}: ${gauge}`)
 
-    const weight = await mainnetClient.readContract({
-      address: GAUGE_CONTROLLER,
+    let { result } = await mainnetClient.simulateContract({
+      address: gaugeControllerAddress,
       abi: gaugeController,
-      functionName: 'get_gauge_weight',
-      args: [gauge],
+      functionName: 'gauge_relative_weight_write',
+      // args: [gauge, BigInt(0)],
+      args: [gauge, BigInt(1692867600)],
     })
 
-    console.log(`weight ${i}: ${weight}`)
+    // * NOTES: gauge_relative_weight_write returns 1 even if no vote is casted
+    if (result.toString() === '1') result = BigInt(0)
 
-    totalWeight += weight
+    console.log(`weight ${i}: ${result}`)
 
-    csv.push([gauge, weight.toString()])
-  }
-
-  for (let i = 1; i < csv.length; i++) {
-    csv[i].push(totalWeight.toString())
+    csv.push([gauge, result.toString()])
   }
 
   let csvString = ''
@@ -71,7 +76,7 @@ async function main() {
 
   const now = new Date()
   const dateTime = now.toISOString().replace(/[:T-]/g, '').split('.')[0]
-  const filename = `./data/${dateTime}-${l2Client.chain.name}-gauge-weights-${cgf}.csv`
+  const filename = `./data/${dateTime}-${l2Client.name}-gauge-weights.csv`
 
   console.log(`writing ${filename}`)
 

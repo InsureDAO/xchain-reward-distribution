@@ -10,7 +10,6 @@ program
   .option('-f, --fork', 'use fork')
   .option('-t, --testnet', 'use testnet')
   .option('-i, --input <path>', 'input file path')
-  .option('-r, --reward-token <address>', 'reward token address')
   .option('-a, --amount <amount>', 'amount to deposit in ether')
 
 program.parse()
@@ -18,11 +17,10 @@ program.parse()
 const opts = program.opts()
 
 async function main() {
-  const { chain, fork, testnet, input, rewardToken, amount } = opts
+  const { chain, fork, testnet, input, amount } = opts
 
   if (!chain) throw new Error('chain name is required - use --chain <chain>')
   if (!input) throw new Error('input file path is required - use --input <path>')
-  if (!rewardToken) throw new Error('reward token address is required - use --reward-token <address>')
   if (!amount) throw new Error('amount is required - use --amount <amount>')
   if (fork && testnet) throw new Error('cannot use --fork and --testnet together')
 
@@ -33,21 +31,34 @@ async function main() {
 
   const account = privateKeyToAccount(`0x${depositorKey}`)
 
-  const rows = (await csv.default().fromFile(input)) as { gauge: string; weight: string; totalWeight: string }[]
+  const { default: addresses } = (await import(`../constants/addresses/${l2Client.name}.json`)) as {
+    default: { [key: string]: `0x${string}` }
+  }
+
+  const reward = addresses.REWARD_TOKEN
+  if (!reward) throw new Error('REWARD_TOKEN not found')
+
+  const rows = (await csv.default().fromFile(input)) as { gauge: string; weight: string }[]
+
+  const totalWeight = rows.reduce((acc, row) => acc + BigInt(row.weight), BigInt(0))
+
+  console.log({ totalWeight })
 
   for (const row of rows) {
-    const rate = (BigInt(row.weight) * BigInt(parseEther(amount))) / BigInt(row.totalWeight)
+    const rate = (BigInt(row.weight) * BigInt(parseEther(amount))) / BigInt(totalWeight)
+
+    if (rate === BigInt(0)) continue
 
     const { request } = await l2Client.simulateContract({
       account,
       address: row.gauge as `0x${string}`,
       abi: childGauge,
       functionName: 'deposit_reward_token',
-      args: [rewardToken, rate],
+      args: [reward, rate],
     })
 
-    const hash = await l2Client.writeContract(request)
-    await l2Client.waitForTransactionReceipt({ hash })
+    // const hash = await l2Client.writeContract(request)
+    // await l2Client.waitForTransactionReceipt({ hash })
 
     console.log(`deposited ${formatEther(rate)} (unit = ether) token to ${row.gauge}`)
   }

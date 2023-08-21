@@ -32,13 +32,16 @@
     "deploy:child-opGoerli": "MODE=testnet npx hardhat run scripts/setup/05.deploy-child-gauges.ts --network opGoerli",
     "add-gauges:arbFork": "MODE=fork TARGET=arbitrumFork hardhat run scripts/setup/06.add-gauges.ts --network mainnetFork",
     "add-gauges:opGoerli": "MODE=testnet TARGET=opGoerli hardhat run scripts/setup/06.add-gauges.ts --network goerli",
-    "add-reward:arbFork": "MODE=fork REWARD_TOKEN=\"0x912CE59144191C1204E64559FE8253a0e49E6548\" hardhat run scripts/setup/07.add-reward.ts --network arbitrumFork",
+    "add-reward:arbFork": "MODE=fork hardhat run scripts/setup/07.add-reward.ts --network arbitrumFork",
+    "add-reward:opGoerli": "MODE=testnet hardhat run scripts/setup/07.add-reward.ts --network opGoerli",
     "setup:arbFork": "npm run deploy:core-mainnetFork && npm run deploy:core-arbFork && npm run deploy:root-arbFork && npm run deploy:child-arbFork && npm run add-gauges:arbFork && npm run add-reward:arbFork",
     "deposit-usdc:arbFork": "npx hardhat run scripts/setup/fork/deposit.ts --network arbitrumFork",
     "vote:arbFork": "TARGET=arbitrumFork npx hardhat run scripts/setup/fork/vote.ts --network mainnetFork",
-    "csv:arbFork": "npx ts-node scripts/operations/create-csv.ts -c arbitrum -f -cgf $CHILD_GAUGE_FACTORY",
+    "csv:arbFork": "npx ts-node scripts/operations/create-csv.ts -c arbitrum -f",
+    "csv:opGoerli": "npx ts-node scripts/operations/create-csv.ts -c optimism -t",
     "prepare-reward:arbFork": "npx hardhat run scripts/setup/fork/send-arb-token.ts --network arbitrumFork",
-    "deposit-reward:arbFork": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c arbitrum -f -r \"0x912CE59144191C1204E64559FE8253a0e49E6548\" -a \"1000\" -i $CSV_PATH"
+    "deposit-reward:arbFork": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c arbitrum -f -a \"1000\" -i $CSV_PATH",
+    "deposit-reward:opGoerli": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c optimism -t -a $AMOUNT -i $CSV_PATH"
   },
   "repository": {
     "type": "git",

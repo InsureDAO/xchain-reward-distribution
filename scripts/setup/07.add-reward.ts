@@ -2,10 +2,17 @@ import { ethers, network } from 'hardhat'
 import { getSigners } from './fork/helpers'
 
 async function main() {
-  const [admin] = await getSigners('fork')
+  const MODE = process.env.MODE
+  if (!MODE) throw new Error('MODE not set')
 
-  const reward = process.env.REWARD_TOKEN
-  if (!reward) throw new Error('Please specify the reward token with the REWARD_TOKEN environment variable')
+  const [admin] = await getSigners(MODE)
+
+  const { default: addresses } = (await import(`../constants/addresses/${network.name}.json`)) as {
+    default: { [key: string]: string }
+  }
+
+  const reward = addresses.REWARD_TOKEN
+  if (!reward) throw new Error('REWARD_TOKEN not found')
 
   const erc20 = await ethers.getContractAt('IERC20', reward, admin)
 
