@@ -41,7 +41,8 @@
     "csv:opGoerli": "npx ts-node scripts/operations/create-csv.ts -c optimism -t",
     "prepare-reward:arbFork": "npx hardhat run scripts/setup/fork/send-arb-token.ts --network arbitrumFork",
     "deposit-reward:arbFork": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c arbitrum -f -a \"1000\" -i $CSV_PATH",
-    "deposit-reward:opGoerli": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c optimism -t -a $AMOUNT -i $CSV_PATH"
+    "deposit-reward:opGoerli": "DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c optimism -t -a $AMOUNT -i $CSV_PATH",
+    "transmit-emissions:goerli": "MODE=testnet npx hardhat run scripts/operations/transmit-emissions.ts --network goerli"
   },
   "repository": {
     "type": "git",
