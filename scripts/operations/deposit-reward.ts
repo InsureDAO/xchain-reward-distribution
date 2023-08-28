@@ -57,8 +57,8 @@ async function main() {
       args: [reward, rate],
     })
 
-    // const hash = await l2Client.writeContract(request)
-    // await l2Client.waitForTransactionReceipt({ hash })
+    const hash = await l2Client.writeContract(request)
+    await l2Client.waitForTransactionReceipt({ hash })
 
     console.log(`deposited ${formatEther(rate)} (unit = ether) token to ${row.gauge}`)
   }
