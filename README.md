@@ -51,7 +51,7 @@ This repository contains Xchain INSURE emission & reward distribution test & scr
 
 [See Here](documents/deploy_flow.md)
 
-## Process
+## Steps
 
 ### 1. Deploy `RootGaugeFactory` & `RootGauge(implementation)` to L1
 
@@ -77,7 +77,7 @@ This repository contains Xchain INSURE emission & reward distribution test & scr
 
 - `npm run deploy:root-opGoerli`
 - or `MODE=testnet TARGET=opGoerli npx hardhat run scripts/setup/04.deploy-root-gauges.ts --network goerli`
-  - set `TARGET` to the network name list on `hardhat.config.ts`
+  - set `TARGET` to the network name listed on `hardhat.config.ts`
 
 ### 5. Deploy child gauges to L2 with factory
 
@@ -100,10 +100,24 @@ This repository contains Xchain INSURE emission & reward distribution test & scr
 
 [See Here](documents/distribution_flow.md)
 
-## Process
-
-### Prerequisites
+## Steps
 
 ### 1. Create CSV
 
+- `npm run csv:opGoerli`
+- or `npx ts-node scripts/operations/create-csv.ts -c optimism -t`
+  - `-c`: l2 chain name
+    - supported chains: `optimism, arbitrum`
+  - `-t`: use testnet
+- for the multi chain calls in the single script, we don't use hardhat
+- csv file is generated in the `data` directory
+
 ### 2. Deposit reward tokens to child gauges
+
+- `npm run deposit-reward:opGoerli`
+- or `DEPOSITOR_KEY=$ADMIN_KEY npx ts-node scripts/operations/deposit-reward.ts -c optimism -t -a $AMOUNT -i $CSV_PATH`
+  - `DEPOSITOR_KEY`: admin account of the child gauges
+  - `AMOUNT`: the amount of tokens without decimals
+    - e.g. You should set 1000 to AMOUNT to deposit 1000 OP token to gauges
+  - `CSV_PATH`: path to the csv file created on step 1
+    - e.g. `./data/20230825081153-opGoerli-gauge-weights.csv`
