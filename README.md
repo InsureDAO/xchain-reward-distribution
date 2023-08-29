@@ -1,4 +1,4 @@
-# (WIP) XChain Reward Distribution Test / Script
+# XChain Reward Distribution Test / Script
 
 This repository contains Xchain INSURE emission & reward distribution test & script.
 
