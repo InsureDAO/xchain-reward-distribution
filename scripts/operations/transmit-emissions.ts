@@ -40,11 +40,24 @@ async function main() {
     for (let i = 0; i < n; i++) {
       const gauge = await rgf.get_gauge(chain, i)
       const rg = await ethers.getContractAt('RootGauge', gauge, admin)
+      const minter = await ethers.getContractAt('IMinter', MINTER)
 
       console.log(`Transmit emissions for gauge ${gauge}`)
 
       // update emissions for the gauge
       await rg.user_checkpoint(ethers.ZeroAddress).then((tx) => tx.wait())
+
+      // calculate emissions
+      const totalMint = await rg.integrate_fraction(gauge)
+      const minted = await minter.minted(gauge, gauge)
+      const toMint = totalMint - minted
+      const noMint = toMint.toString() === '0'
+
+      // skip if no emissions, avoid tx revert of no emissions
+      if (noMint) {
+        console.log(`No emissions to transmit for gauge ${gauge}`)
+        continue
+      }
       // transmit emissions to its child gauge
       await rgf.transmit_emissions(gauge).then((tx) => tx.wait())
     }
