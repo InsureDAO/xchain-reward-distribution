@@ -121,3 +121,9 @@ This repository contains Xchain INSURE emission & reward distribution test & scr
     - e.g. You should set 1000 to AMOUNT to deposit 1000 OP token to gauges
   - `CSV_PATH`: path to the csv file created on step 1
     - e.g. `./data/20230825081153-opGoerli-gauge-weights.csv`
+
+### 3. Transmit $INSURE token weekly
+
+- `npm run transmit-emissions:goerli": "MODE=testnet npx hardhat run scripts/operations/transmit-emissions.ts --network goerli`
+- or `MODE=testnet npx hardhat run scripts/operations/transmit-emissions.ts --network goerli`
+- The gauge having no emissions are skipped
